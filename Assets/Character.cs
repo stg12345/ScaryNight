@@ -2,19 +2,36 @@
 using System.Collections;
 
 public class Character : MonoBehaviour {
-	public int Speed;
+	public float Speed;
+	public KeyCode Left;
+	public KeyCode Right;
+
 	// Use this for initialization
 	void Start () {
-		Speed =10;
+		Speed=3;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if(Input.GetButton("right")) 
-			rigidbody2D.AddForce (Vector3.right * 2);
-		if(Input.GetButton("left")) 
-			rigidbody2D.AddForce (Vector3.left * 2);
+		/*Vector2 Temp = rigidbody2D.velocity;
+		Temp.x = 0;
+		rigidbody2D.velocity = Temp;*/
+		if(rigidbody2D.velocity.x <=4)
+		{
+			if(Input.GetKey("right")) 
+			{	Vector2 tmp;
+				tmp.x = Speed;
+				tmp.y = 0;
+				rigidbody2D.AddForce(new Vector2(Speed,0));}
+			if(Input.GetButton("left")) 
+			{	Vector2 tmp;
+				tmp.x = Speed*-1;
+				tmp.y = 0;
+				rigidbody2D.AddForce(new Vector2(Speed*-1,0));}
+		}
+		Debug.Log(rigidbody2D.velocity.x);
+			
 	}
 
 
@@ -32,6 +49,20 @@ public class Character : MonoBehaviour {
 	void FixedUpdate () 
 	{
 		if(Input.GetButtonDown("Jump"))
-		rigidbody2D.AddForce (Vector3.up * 100);
+		rigidbody2D.AddForce (Vector3.up * 400);
+
+		if(rigidbody2D.velocity.x <=4)
+		{
+			if(Input.GetKey("right")) 
+			{	Vector2 tmp;
+				tmp.x = Speed;
+				tmp.y = 0;
+				rigidbody2D.AddForce(new Vector2(Speed,0));}
+			if(Input.GetButton("left")) 
+			{	Vector2 tmp;
+				tmp.x = Speed*-1;
+				tmp.y = 0;
+				rigidbody2D.AddForce(new Vector2(Speed*-1,0));}
+		}
 	}
 } 
