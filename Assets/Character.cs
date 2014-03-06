@@ -3,12 +3,16 @@ using System.Collections;
 
 public class Character : MonoBehaviour {
 	public float Speed;
-	public KeyCode Left;
-	public KeyCode Right;
+	private RaycastHit2D[] hit;
+	Vector2 Direction;
+	public float DistancetoGround;
+	private bool Grounded = false;
 
 	// Use this for initialization
 	void Start () {
-		Speed=3;
+		Speed=6f;
+		DistancetoGround = 0.7f;
+		Direction = new Vector2(0,-1);
 	}
 	
 	// Update is called once per frame
@@ -17,21 +21,11 @@ public class Character : MonoBehaviour {
 		/*Vector2 Temp = rigidbody2D.velocity;
 		Temp.x = 0;
 		rigidbody2D.velocity = Temp;*/
-		if(rigidbody2D.velocity.x <=4)
-		{
-			if(Input.GetKey("right")) 
-			{	Vector2 tmp;
-				tmp.x = Speed;
-				tmp.y = 0;
-				rigidbody2D.AddForce(new Vector2(Speed,0));}
-			if(Input.GetButton("left")) 
-			{	Vector2 tmp;
-				tmp.x = Speed*-1;
-				tmp.y = 0;
-				rigidbody2D.AddForce(new Vector2(Speed*-1,0));}
-		}
-		Debug.Log(rigidbody2D.velocity.x);
-			
+
+		Debug.Log("Current Speed is " + rigidbody2D.velocity.x);
+		Grounding ();
+		ManipulatePhysics ();
+		Debug.Log("Linear Drag : " +rigidbody2D.drag);
 	}
 
 
@@ -47,22 +41,39 @@ public class Character : MonoBehaviour {
 	}
 
 	void FixedUpdate () 
-	{
-		if(Input.GetButtonDown("Jump"))
-		rigidbody2D.AddForce (Vector3.up * 400);
+	{	ManipulatePhysics ();
+		if(Grounded == true)
+		{		if(Input.GetButtonDown("Jump"))
+				{
+				rigidbody2D.AddForce (Vector3.up * 800);
+		}		}
 
-		if(rigidbody2D.velocity.x <=4)
+		if(rigidbody2D.velocity.x <=4 && rigidbody2D.velocity.x >=-4)
 		{
 			if(Input.GetKey("right")) 
-			{	Vector2 tmp;
-				tmp.x = Speed;
-				tmp.y = 0;
-				rigidbody2D.AddForce(new Vector2(Speed,0));}
+			{	rigidbody2D.AddForce(new Vector2(Speed*10,0));}
 			if(Input.GetButton("left")) 
-			{	Vector2 tmp;
-				tmp.x = Speed*-1;
-				tmp.y = 0;
-				rigidbody2D.AddForce(new Vector2(Speed*-1,0));}
+			{	rigidbody2D.AddForce(new Vector2(Speed*-10,0));}
 		}
+	}
+
+	void Grounding()
+	{
+		hit = Physics2D.RaycastAll(transform.position, Direction, DistancetoGround);
+		for(int i=0; i<hit.Length;i++)
+			{
+				if(hit[i].collider.gameObject.tag == "Ground")
+					Grounded = true;
+				else
+					Grounded = false;
+			}
+	}
+
+	void ManipulatePhysics()
+	{
+		if(Grounded == false)
+			rigidbody2D.drag = 1;
+		else
+			rigidbody2D.drag = 10;
 	}
 } 
